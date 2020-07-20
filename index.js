@@ -54,37 +54,63 @@ const box_location = [
   {left: 20, width: 4},
   {left: 22, width: 4},
   {left: 26, width: 5},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 30, width: 4},
+  {left: 20, width: 2},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 30, width: 4},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 30, width: 4},
+  {left: 20, width: 2},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 30, width: 4},
+  {left: 30, width: 4},
+  {left: 20, width: 2},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 30, width: 4},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 30, width: 4},
+  {left: 20, width: 2},
+  {left: 20, width: 3},
+  {left: 20, width: 5},
+  {left: 30, width: 4},
   {left: 10, width: 1}
 ]
 
+const keydown_function = function(event){
+  if (event.repeat || event.keyCode !== 32) { return } //make sure space is pressed
+  timer_function = setInterval(function(){ 
 
+      time_hold += 5;
+      let bar_current_width = bar_width * (4000 - time_hold) / 4000
+      if (bar_current_width > 0){
+          bar.style = `width: ${bar_current_width}%`
+      }
+  }, 1);
+           
+}
+const keyup_function = function(event){
+  if (event.isComposing || event.keyCode === 229 || event.keyCode !== 32) {
+      return;
+  }
+  let height_percentage = time_hold > 4000 ? 1 : time_hold / 4000;
+  jump(height_percentage)
+  clearInterval(timer_function); //clear the hold down function
 
-document.addEventListener("keydown", function(){
+  bar.style = `width: ${bar_width}%` //reset the bar
+  time_hold = 0
+}
 
-    if (event.repeat || event.keyCode !== 32) { return } //make sure space is pressed
-    timer_function = setInterval(function(){ 
-
-        time_hold += 5;
-        let bar_current_width = bar_width * (4000 - time_hold) / 4000
-        if (bar_current_width > 0){
-            bar.style = `width: ${bar_current_width}%`
-        }
-
-    }, 1);
-              
-})
-
-document.addEventListener("keyup", function(){
-    if (event.isComposing || event.keyCode === 229 || event.keyCode !== 32) {
-        return;
-    }
-    let height_percentage = time_hold > 4000 ? 1 : time_hold / 4000;
-    jump(height_percentage)
-    clearInterval(timer_function); //clear the hold down function
-
-    bar.style = `width: ${bar_width}%` //reset the bar
-    time_hold = 0
-})
+document.addEventListener("keyup", keyup_function)
+document.addEventListener("keydown", keydown_function)
 
 function create_next_box(left = 30, width = 2){  //after start is hidden 
   if (left == null) left = 30
@@ -103,6 +129,11 @@ function shift_next(){
   let ct = 0;
   console.log(next_left - start_left)
   shift_distance = next_left - start_left
+  // document.removeEventListener("keydown")
+  // document.removeEventListener("keyup", keyup)
+  document.removeEventListener("keyup", keyup_function)
+  document.removeEventListener("keydown", keydown_function)
+
   function frame(){
     if (ct > shift_distance){
       clearInterval(id);
@@ -111,7 +142,9 @@ function shift_next(){
       start_width = next_width  //next box becomes the new start box
       let tmp = next
       next = create_next_box(next_left + box_location[round_passed].left, box_location[round_passed].width); //next box becomes the new box created from start box
-      start = tmp; //start box becomes the (then) next box
+      start = tmp; //start box becomes the (then) next box    
+      document.addEventListener("keyup", keyup_function)
+      document.addEventListener("keydown", keydown_function)
     }
     
     else {
@@ -133,6 +166,9 @@ function jump(height_percentage){
     let current_left = char_left;
     let max_height = char_top - jump_height * height_percentage
     let max_length = jump_width / 2;
+
+    document.removeEventListener("keyup", keyup_function)
+    document.removeEventListener("keydown", keydown_function)
 
     function frame() {
       if (current_top < max_height) {
@@ -159,12 +195,16 @@ function fall(current_top, max_height, current_left, height_percentage){
         if (current_top >= bottom_border){
             status.innerText = "Failed"
             clearInterval(id);
+            alert("Failed")
+            window.location.reload(false); 
+
         }
         else if (current_top >= char_top) {
           
           char_left = current_left
           if (checkPass()) {   //if character lands on the next box
-              
+              document.addEventListener("keyup", keyup_function)
+              document.addEventListener("keydown", keydown_function)
               clearInterval(id);
               status.innerText = "Pass" 
               start.style.visibility = "hidden" // hide the start box
@@ -182,20 +222,24 @@ function fall(current_top, max_height, current_left, height_percentage){
                 current_top += Math.sqrt(current_top - max_height + 0.01) /speed_factor_y;
                 character.style.top = current_top + '%';
 
-                if (current_left < right_border){
+                if (current_left < right_border ){
+                  if (current_left + char_width > next_left && current_left + char_width < next_left + next_width && current_top > char_top) {return }
                   current_left += speed_factor_x * height_percentage;
                   character.style.left = current_left + '%';
                 }
 
               }
               else {  //the character lands on the same box
+                  document.addEventListener("keyup", keyup_function)
+                  document.addEventListener("keydown", keydown_function)
                   clearInterval(id);
               }
           }       
         } else {
           current_top += Math.sqrt(current_top - max_height + 0.01) /speed_factor_y;
           character.style.top = current_top + '%';
-          if (current_left < right_border){
+          if (current_left < right_border ){
+            if (current_left + char_width > next_left && current_left + char_width < next_left + next_width && current_top > char_top) {return }
             current_left += speed_factor_x * height_percentage;
             character.style.left = current_left + '%';
         }
