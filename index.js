@@ -9,7 +9,7 @@ var time_hold = 0 // record the time the space_key is held
 var timer_function = null // the event that the space key is held
 var char_top = 77.5;  // character top (percentage)
 var char_left = 1;
-const char_width = 3;  
+const char_width = 1.5;  
 const jump_height = 50; 
 const jump_width = 80;
 
@@ -32,16 +32,17 @@ var from = start //the object where the character jumps from, used for landing o
 var round_passed = 0 //record the number of rounds passed
 var score_number = 0;
 var consecutive_times = 1;
+var keyDown = false;
 
 const box_location = [
   {left: 0, width: 5},
   {left: 20, width: 5},
   {left: 30, width: 4},
-  {left: 20, width: 2},
+  {left: 20, width: 4},
   {left: 20, width: 3},
   {left: 20, width: 5},
   {left: 30, width: 4},
-  {left: 20, width: 2},
+  {left: 20, width: 5},
   {left: 20, width: 3},
   {left: 20, width: 5},
   {left: 30, width: 4},
@@ -65,27 +66,48 @@ const box_location = [
   {left: 20, width: 5},
   {left: 20, width: 3},
   {left: 20, width: 5},
-  {left: 30, width: 4},
+  {left: 30, width: 3},
   {left: 20, width: 2},
   {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
-  {left: 30, width: 4},
+  {left: 20, width: 1},
+  {left: 30, width: 2},
+  {left: 30, width: 2},
   {left: 20, width: 2},
   {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
+  {left: 20, width: 2},
+  {left: 30, width: 1},
   {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
+  {left: 20, width: 3},
+  {left: 30, width: 1},
   {left: 20, width: 2},
   {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
+  {left: 20, width: 2},
+  {left: 30, width: 2},
   {left: 10, width: 1}
 ]
 
+function key_hold_sound(){
+  document.getElementById('audio_hold').play()
+}
+
+function key_hold_sound_pause(){
+  document.getElementById('audio_hold').pause()
+  document.getElementById('audio_hold').currentTime = 0
+}
+
+function land_sound(){
+  document.getElementById('audio_land').play()
+}
+
+function fall_sound(){
+  document.getElementById('audio_fall').play()
+}
+
+
 const keydown_function = function(event){
+  keyDown = true
+
+  key_hold_sound()
   if (event.repeat || event.keyCode !== 32) { return } //make sure space is pressed
   timer_function = setInterval(function(){ 
 
@@ -98,6 +120,10 @@ const keydown_function = function(event){
            
 }
 const keyup_function = function(event){
+
+  key_hold_sound_pause()
+  land_sound()
+  if (!keyDown) {return}
   if (event.isComposing || event.keyCode === 229 || event.keyCode !== 32) {
       return;
   }
@@ -107,6 +133,7 @@ const keyup_function = function(event){
 
   bar.style = `width: ${bar_width}%` //reset the bar
   time_hold = 0
+  keyDown = false;
 }
 
 document.addEventListener("keyup", keyup_function)
@@ -116,7 +143,7 @@ function create_next_box(left = 30, width = 2){  //after start is hidden
   if (left == null) left = 30
   if (width == null) width = 3
   start.style.left = left + "%"
-  start.style.width = width + "vw"
+  start.style.width = width + "%"
   start.style.visibility = "visible"
 
   next_left = left 
@@ -173,6 +200,8 @@ function jump(height_percentage){
     function frame() {
       if (current_top < max_height) {
         clearInterval(id);
+        document.addEventListener("keyup", keyup_function)
+        document.addEventListener("keydown", keydown_function)
         fall(current_top, max_height, current_left, height_percentage);
         
       } else {
@@ -189,20 +218,26 @@ function jump(height_percentage){
 
 function fall(current_top, max_height, current_left, height_percentage){
     let id = setInterval(frame, 1);
+    document.removeEventListener("keyup", keyup_function)
+    document.removeEventListener("keydown", keydown_function)
     let max_length = jump_width;
-
+    let checked = false;
     function frame() {
-        if (current_top >= bottom_border){
+        if (current_top >= bottom_border){ //when the box touches the bottom
+            fall_sound()
             status.innerText = "Failed"
             clearInterval(id);
-            alert("Failed")
-            window.location.reload(false); 
+            document.addEventListener("keyup", keyup_function)
+            document.addEventListener("keydown", keydown_function)
+            // alert("Failed")
+            // window.location.reload(false); 
 
         }
         else if (current_top >= char_top) {
           
           char_left = current_left
-          if (checkPass()) {   //if character lands on the next box
+
+          if (checkPass() && !checked) {   //if character lands on the next box
               document.addEventListener("keyup", keyup_function)
               document.addEventListener("keydown", keydown_function)
               clearInterval(id);
@@ -217,25 +252,29 @@ function fall(current_top, max_height, current_left, height_percentage){
               }
           }
           else {
-              if (char_left > start_width + start_left){
+              if (char_left <= start_width + start_left){   //haven't leave the starting box
+                document.addEventListener("keyup", keyup_function)
+                document.addEventListener("keydown", keydown_function)
+                clearInterval(id);
+              }
+              else {   //left the starting box but misses
 
                 current_top += Math.sqrt(current_top - max_height + 0.01) /speed_factor_y;
                 character.style.top = current_top + '%';
 
                 if (current_left < right_border ){
-                  if (current_left + char_width > next_left && current_left + char_width < next_left + next_width && current_top > char_top) {return }
+                  if (current_left + char_width > next_left && current_left + char_width < next_left + next_width){return}
+                   
                   current_left += speed_factor_x * height_percentage;
                   character.style.left = current_left + '%';
                 }
 
               }
-              else {  //the character lands on the same box
-                  document.addEventListener("keyup", keyup_function)
-                  document.addEventListener("keydown", keydown_function)
-                  clearInterval(id);
-              }
-          }       
-        } else {
+          }
+          checked = true       
+        } 
+        
+        else { //still flying above the height of the box
           current_top += Math.sqrt(current_top - max_height + 0.01) /speed_factor_y;
           character.style.top = current_top + '%';
           if (current_left < right_border ){

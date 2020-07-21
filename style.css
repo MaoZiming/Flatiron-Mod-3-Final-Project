@@ -18,9 +18,10 @@
 }
 
 #character {
-    width: 3vw;
+    width: 1.5%;
     height: 3vw;
-    background-color: red;
+    background-image: url('asset/i.png');
+    background-size: cover;
     position: relative;
     top: 77.5%;
     left: 1%;
