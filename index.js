@@ -3,6 +3,8 @@ const bar = document.querySelector("#bar")
 var next = document.querySelector("#block")
 const status = document.querySelector("#status")
 const score = document.querySelector("#score")
+const bonus = document.querySelector("#bonus")
+
 var start = document.querySelector("#start")
 
 var time_hold = 0 // record the time the space_key is held
@@ -35,18 +37,17 @@ var consecutive_times = 1;
 var keyDown = false;
 
 const box_location = [
-  {left: 0, width: 5},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
+  {left: 10, width: 8},
+  {left: 11, width: 5},
+  {left: 14, width: 9},
+  {left: 16, width: 10},
+  {left: 12, width: 8},
   {left: 20, width: 4},
-  {left: 20, width: 3},
+  {left: 19, width: 5},
+  {left: 11, width: 3},
   {left: 20, width: 5},
-  {left: 30, width: 4},
-  {left: 20, width: 5},
-  {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
-  {left: 20, width: 2},
+  {left: 14, width: 4},
+  {left: 20, width: 8},
   {left: 20, width: 3},
   {left: 20, width: 5},
   {left: 30, width: 4},
@@ -107,8 +108,9 @@ function fall_sound(){
 const keydown_function = function(event){
   keyDown = true
 
+  
+  if (event.repeat || event.keyCode !== 32) { return } //make sure space is pressed'
   key_hold_sound()
-  if (event.repeat || event.keyCode !== 32) { return } //make sure space is pressed
   timer_function = setInterval(function(){ 
 
       time_hold += 5;
@@ -121,9 +123,10 @@ const keydown_function = function(event){
 }
 const keyup_function = function(event){
 
-  key_hold_sound_pause()
+  
   land_sound()
   if (!keyDown) {return}
+  key_hold_sound_pause()
   if (event.isComposing || event.keyCode === 229 || event.keyCode !== 32) {
       return;
   }
@@ -139,7 +142,7 @@ const keyup_function = function(event){
 document.addEventListener("keyup", keyup_function)
 document.addEventListener("keydown", keydown_function)
 
-function create_next_box(left = 30, width = 2){  //after start is hidden 
+function create_next_box(left = 30, width = 8){  //after start is hidden 
   if (left == null) left = 30
   if (width == null) width = 3
   start.style.left = left + "%"
@@ -161,14 +164,15 @@ function shift_next(){
   document.removeEventListener("keyup", keyup_function)
   document.removeEventListener("keydown", keydown_function)
 
+
   function frame(){
     if (ct > shift_distance){
       clearInterval(id);
-
+      bonus.innerText = ""
       start_left = next_left   //next box is shifted to the left 
       start_width = next_width  //next box becomes the new start box
       let tmp = next
-      next = create_next_box(next_left + box_location[round_passed].left, box_location[round_passed].width); //next box becomes the new box created from start box
+      next = create_next_box(next_left + box_location[round_passed-1].left, box_location[round_passed-1].width); //next box becomes the new box created from start box
       start = tmp; //start box becomes the (then) next box    
       document.addEventListener("keyup", keyup_function)
       document.addEventListener("keydown", keydown_function)
@@ -231,6 +235,8 @@ function fall(current_top, max_height, current_left, height_percentage){
             document.addEventListener("keydown", keydown_function)
             // alert("Failed")
             // window.location.reload(false); 
+            score_number = 0
+            score.innerText = ` Score: ${score_number }`
 
         }
         else if (current_top >= char_top) {
@@ -287,8 +293,10 @@ function fall(current_top, max_height, current_left, height_percentage){
 }
 
 function checkPass(){
-    let error_margin = 1
-    if (char_left + char_width > next_left + next_width - error_margin && char_left + char_width < next_left + next_width + error_margin ){
+    let error_margin = next_width * 0.3
+    if (char_left + char_width/2 > next_left + next_width /2 - error_margin && char_left + char_width /2 < next_left + next_width /2 + error_margin ){
+      bonus.innerText = "+" + 10 * (Math.pow(2, consecutive_times - 1))
+      bonus.style.left = char_left + "%"
       score_number += 10 * (Math.pow(2, consecutive_times - 1))
       consecutive_times ++ 
       score.innerText = ` Score: ${score_number }`
