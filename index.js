@@ -4,6 +4,13 @@ var next = document.querySelector("#block")
 const status = document.querySelector("#status")
 const score = document.querySelector("#score")
 const bonus = document.querySelector("#bonus")
+const name = document.querySelector("#name")
+const name_display = document.querySelector("#name_display")
+const mOverlay = document.querySelector("#modal_window")
+const mOpen = document.querySelector('#modal_open')
+const mClose = document.querySelector('#modal_close')
+const modal = document.querySelector('#modal_holder')
+var modalOpen = false
 
 var start = document.querySelector("#start")
 
@@ -36,56 +43,11 @@ var score_number = 0;
 var consecutive_times = 1;
 var keyDown = false;
 
-const box_location = [
-  {left: 10, width: 8},
-  {left: 11, width: 5},
-  {left: 14, width: 9},
-  {left: 16, width: 10},
-  {left: 12, width: 8},
-  {left: 20, width: 4},
-  {left: 19, width: 5},
-  {left: 11, width: 3},
-  {left: 20, width: 5},
-  {left: 14, width: 4},
-  {left: 20, width: 8},
-  {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
-  {left: 20, width: 2},
-  {left: 20, width: 3},
-  {left: 20, width: 4},
-  {left: 22, width: 4},
-  {left: 26, width: 5},
-  {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
-  {left: 20, width: 2},
-  {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 4},
-  {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 20, width: 3},
-  {left: 20, width: 5},
-  {left: 30, width: 3},
-  {left: 20, width: 2},
-  {left: 20, width: 3},
-  {left: 20, width: 1},
-  {left: 30, width: 2},
-  {left: 30, width: 2},
-  {left: 20, width: 2},
-  {left: 20, width: 3},
-  {left: 20, width: 2},
-  {left: 30, width: 1},
-  {left: 20, width: 3},
-  {left: 20, width: 3},
-  {left: 30, width: 1},
-  {left: 20, width: 2},
-  {left: 20, width: 3},
-  {left: 20, width: 2},
-  {left: 30, width: 2},
-  {left: 10, width: 1}
-]
+
+
+name.addEventListener("input", function(){
+  name_display.innerText = name.value
+})
 
 function key_hold_sound(){
   document.getElementById('audio_hold').play()
@@ -102,6 +64,18 @@ function land_sound(){
 
 function fall_sound(){
   document.getElementById('audio_fall').play()
+}
+
+function combo_sound(){
+  if (consecutive_times == 1){
+    document.getElementById('combo_one').play()
+  }
+  else if (consecutive_times == 2){
+    document.getElementById('combo_two').play()
+  }
+  else if (consecutive_times >= 3){
+    document.getElementById('combo_three').play()
+  }
 }
 
 
@@ -124,12 +98,14 @@ const keydown_function = function(event){
 const keyup_function = function(event){
 
   
-  land_sound()
+  
   if (!keyDown) {return}
-  key_hold_sound_pause()
+
   if (event.isComposing || event.keyCode === 229 || event.keyCode !== 32) {
       return;
   }
+  key_hold_sound_pause()
+  land_sound()
   let height_percentage = time_hold > 4000 ? 1 : time_hold / 4000;
   jump(height_percentage)
   clearInterval(timer_function); //clear the hold down function
@@ -139,8 +115,8 @@ const keyup_function = function(event){
   keyDown = false;
 }
 
-document.addEventListener("keyup", keyup_function)
-document.addEventListener("keydown", keydown_function)
+// document.addEventListener("keyup", keyup_function)
+// document.addEventListener("keydown", keydown_function)
 
 function create_next_box(left = 30, width = 8){  //after start is hidden 
   if (left == null) left = 30
@@ -231,12 +207,13 @@ function fall(current_top, max_height, current_left, height_percentage){
             fall_sound()
             status.innerText = "Failed"
             clearInterval(id);
-            document.addEventListener("keyup", keyup_function)
-            document.addEventListener("keydown", keydown_function)
+            // document.addEventListener("keyup", keyup_function)
+            // document.addEventListener("keydown", keydown_function)
             // alert("Failed")
             // window.location.reload(false); 
             score_number = 0
             score.innerText = ` Score: ${score_number }`
+            modalShow ()
 
         }
         else if (current_top >= char_top) {
@@ -262,6 +239,7 @@ function fall(current_top, max_height, current_left, height_percentage){
                 document.addEventListener("keyup", keyup_function)
                 document.addEventListener("keydown", keydown_function)
                 clearInterval(id);
+                consecutive_times = 0;
               }
               else {   //left the starting box but misses
 
@@ -293,13 +271,15 @@ function fall(current_top, max_height, current_left, height_percentage){
 }
 
 function checkPass(){
-    let error_margin = next_width * 0.3
+    let error_margin = next_width * 0.2
     if (char_left + char_width/2 > next_left + next_width /2 - error_margin && char_left + char_width /2 < next_left + next_width /2 + error_margin ){
       bonus.innerText = "+" + 10 * (Math.pow(2, consecutive_times - 1))
       bonus.style.left = char_left + "%"
       score_number += 10 * (Math.pow(2, consecutive_times - 1))
       consecutive_times ++ 
       score.innerText = ` Score: ${score_number }`
+      combo_sound()
+
     }
     else {
       consecutive_times = 1
@@ -309,4 +289,59 @@ function checkPass(){
     else {
        return false
     }
+}
+
+let enterClose = function(event){
+  console.log(event)
+  if (event.code === "Enter"){
+    modalClose(event)
+    document.removeEventListener("keydown", enterClose)
+  }
+}
+
+function modalShow () {
+  lastFocus = document.activeElement;
+  mOverlay.setAttribute('aria-hidden', 'false');
+  modalOpen = true;
+  modal.setAttribute('tabindex', '0');
+  document.addEventListener("keydown", enterClose)
+  modal.focus();
+}
+
+modalShow()
+mClose.addEventListener('click', modalClose);
+
+
+function modalClose ( event ) {
+  if (modalOpen) {
+    mOverlay.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('tabindex', '-1');
+    modalOpen = false;
+    lastFocus.focus();
+
+    // Start the game
+    document.addEventListener("keyup", keyup_function)
+    document.addEventListener("keydown", keydown_function)
+    restart()
+  }
+}
+
+function focusRestrict ( event ) {
+  if ( modalOpen && !modal.contains( event.target ) ) {
+    event.stopPropagation();
+    modal.focus();
+  }
+}
+
+function restart(){
+   character.style.left = "1%"
+   character.style.top = "77.5%"
+   start.style.left = "1%"
+   next.style.left = "20%"
+   status.innerText = ""
+   round_passed = 0
+   consecutive_times = 0
+   char_left = 1
+   char_top = 77.5
+
 }

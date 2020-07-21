@@ -79,3 +79,108 @@
     position: absolute;
     top: 76%;
 }
+
+#name_display {
+    position: absolute;
+    left: 5%
+}
+
+/* modal window */
+/* Credit: https://codepen.io/scottohara/pen/lIdfv */
+
+/*
+  Modal Overlay
+*/
+.modal-overlay {
+    background:rgba(0,0,0,.8);
+    height: 100%;
+    left: 0;
+    display: flex;
+    overflow: auto;
+    padding: 1.5em;
+    position: fixed;
+    top: 0;
+    transition: opacity .2s;
+    width: 100%;
+    z-index: -1;
+  }
+  
+  .modal-overlay[aria-hidden="true"] {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .modal-overlay[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+  
+  /*
+    Modal Content Area
+  */
+  .modal-content {
+    background: #efefef;
+    margin: auto;
+    max-width: 800px;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: 1.5em;
+    position: relative;
+    transform: scale(.8);
+    transition: transform .3s;
+    width: 100%;
+  }
+  
+  .modal-overlay[aria-hidden="false"] .modal-content {
+    transform: scale(1);
+  }
+  
+  /*
+    General Modal Content
+  */
+  #modal-title {
+    margin-top: 0;
+    padding-right: 1.25em;
+  }
+  
+  /*
+    Close Modal Button
+  */
+  .btn {
+    background: #921c2b;
+    border: 1px solid #4d0912;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1em;
+    line-height: 1;
+    margin-bottom: 12px;
+    padding: 16px 24px;
+    position: relative;
+    text-align: center;
+    transition: transform .2s, 
+    background .2s;
+  }
+  
+  .btn:hover, .btn:focus {
+    background: #c12f48;
+    transform: scale(1.1);
+    z-index: 3;
+  }
+
+  label {
+    display: inline-block;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: .5em;
+  }
+  
+  .input {
+    border: 1px solid #333;
+    display: block;
+    font-size: 1.4em;
+    margin-bottom: 1em;
+    min-width: 230px;
+    padding: 8px;
+    width: 100%;
+  }

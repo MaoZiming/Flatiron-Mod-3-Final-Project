@@ -15,8 +15,29 @@
         <div id = "start"></div>
         <h1 id = "score"> Score: 0 </h2>
         <h1 id = "bonus"></h1>
+        <h1 id = "name_display"></h1>
     </div>
-    <h1 id="status"> Status</h1>
+
+    
+    <h1 id="status"></h1>
+
+    <div class="modal-overlay" id="modal_window"
+    aria-hidden="true" role="dialog"
+    aria-labelledby="modal_title">
+
+    <div class="modal-content" id="modal_holder" role="document">
+
+    <h1 id="modal_title">New Game</h1>
+    <label for="name">Username:</label>
+        <input type="text" id="name" class="input" placeholder="Username" />
+        <!-- <button class="btn" type="button" id="modal_close">Open the Modal</button> -->
+        <button class="btn" id="modal_close" type="button" aria-label="close">
+     PLAY
+    </button>
+
+    </div> <!-- end .modal-content -->
+
+    </div> <!-- end .modal-overlay -->
 
 
     <audio id="audio_hold" controls style="display:none">
@@ -31,6 +52,18 @@
         <source src="asset/fall.mp3" type="audio/mp3"> Your browser does not support the audio element.
     </audio>   
 
+    <audio id="combo_one" controls style="display:none">
+        <source src="asset/combo1.mp3" type="audio/mp3"> Your browser does not support the audio element.
+    </audio>  
+
+    <audio id="combo_two" controls style="display:none">
+        <source src="asset/combo2.mp3" type="audio/mp3"> Your browser does not support the audio element.
+    </audio>  
+
+    <audio id="combo_three" controls style="display:none">
+        <source src="asset/combo3.mp3" type="audio/mp3"> Your browser does not support the audio element.
+    </audio>  
+    <script src="game.js"></script>
     <script src="index.js"></script>
 </body>
 </html>
