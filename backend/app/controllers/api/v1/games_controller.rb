@@ -12,4 +12,15 @@ class Api::V1::GamesController < ApplicationController
     end
 
 
+    def create
+        # byebug
+        # game = Game.create(game_params)
+        game = Game.new(params.require(:game).permit(:score, :player_id))
+        game.save()
+        render json: game
+    end
+
+
+
+
 end

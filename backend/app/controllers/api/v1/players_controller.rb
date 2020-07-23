@@ -13,25 +13,26 @@ class Api::V1::PlayersController < ApplicationController
 
     def create
         player = Player.create(player_params)
+        Leaderboard.all[0].players << player
         render json: player
     end
 
-    def update
-        # byebug
-        player = Player.find(params[:id])
-        player.update(player_params)
-        render json: player
-    end
+    # def update
+    #     # byebug
+    #     player = Player.find(params[:id])
+    #     player.update(player_params)
+    #     render json: player
+    # end
 
-    def destroy
-        player = Player.find(params[:id])
-        player.destroy
-        render json: "Player deleted!!"
-    end
+    # def destroy
+    #     player = Player.find(params[:id])
+    #     player.destroy
+    #     render json: "Player deleted!!"
+    # end
 
     private
 
-    def instructor_params
+    def player_params
         params.require(:player).permit(:name)
     end
 
