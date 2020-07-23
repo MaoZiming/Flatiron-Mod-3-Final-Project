@@ -2,7 +2,7 @@ class Api::V1::PlayersController < ApplicationController
 
 
     def index 
-        players = Player.All 
+        players = Player.all
         render json: players
     end
 
@@ -11,7 +11,29 @@ class Api::V1::PlayersController < ApplicationController
         render json: player
     end
 
+    def create
+        player = Player.create(player_params)
+        render json: player
+    end
 
+    def update
+        # byebug
+        player = Player.find(params[:id])
+        player.update(player_params)
+        render json: player
+    end
+
+    def destroy
+        player = Player.find(params[:id])
+        player.destroy
+        render json: "Player deleted!!"
+    end
+
+    private
+
+    def instructor_params
+        params.require(:player).permit(:name)
+    end
 
 
 end

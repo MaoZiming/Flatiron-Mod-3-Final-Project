@@ -2,7 +2,7 @@ class Api::V1::GamesController < ApplicationController
 
 
     def index 
-        games = Game.All 
+        games = Game.all 
         render json: games
     end
 
