@@ -166,8 +166,7 @@
     padding: 16px 24px;
     position: relative;
     text-align: center;
-    transition: transform .2s, 
-    background .2s;
+    transition: transform .2s, background .2s;
   }
   
   .btn:hover, .btn:focus {
