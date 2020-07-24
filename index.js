@@ -18,7 +18,7 @@ const btn_close = document.querySelector("#close")
 
 var time_hold = 0 // record the time the space_key is held
 var timer_function = null // the event that the space key is held
-var char_top = 57;  // character top (percentage)
+var char_bottom = 27;  // character bottom (percentage)
 var char_left = 24;
 var char_height = 16;
 var char_width = 3;  
@@ -33,7 +33,6 @@ var start_left = 20; //start box left
 
 const bar_width = 20;
 const right_border = 95.3;
-const bottom_border = 100;
 const speed_factor_y = 5;
 const speed_factor_x = 1;
 
@@ -275,25 +274,25 @@ function jump(height_percentage){
    
     let id = setInterval(frame, 1);
 
-    let current_top = char_top;
+    let current_bottom = char_bottom;
     let current_left = char_left;
-    let max_height = char_top - jump_height * height_percentage
+    let max_height = char_bottom + jump_height * height_percentage
     let max_length = jump_width / 2;
 
     document.removeEventListener("keyup", keyup_function)
     document.removeEventListener("keydown", keydown_function)
 
     function frame() {
-      if (current_top < max_height) {
+      if (current_bottom > max_height) {
         clearInterval(id);
         document.addEventListener("keyup", keyup_function)
         document.addEventListener("keydown", keydown_function)
-        fall(current_top, max_height, current_left, height_percentage);
+        fall(current_bottom, max_height, current_left, height_percentage);
         
       } else {
-        current_top-= Math.sqrt(current_top - max_height) / speed_factor_y; 
+        current_bottom += Math.sqrt( max_height - current_bottom) / speed_factor_y; 
         // v^2 = 2gx => velocity is proportional to sqrt(distance)
-        character.style.top = current_top + '%';
+        character.style.bottom = current_bottom + '%';
         if (current_left < right_border){
             current_left += speed_factor_x * height_percentage;
             character.style.left = current_left + '%';
@@ -302,7 +301,8 @@ function jump(height_percentage){
     }
 }
 
-function fall(current_top, max_height, current_left, height_percentage){
+function fall(current_bottom, max_height, current_left, height_percentage){
+  // console.log("fall")
     let id = setInterval(frame, 1);
     document.removeEventListener("keyup", keyup_function)
     document.removeEventListener("keydown", keydown_function)
@@ -314,7 +314,7 @@ function fall(current_top, max_height, current_left, height_percentage){
         if (rotated) {
           rotated_dist = char_width * 2;
         }
-        if (current_top + char_height + rotated_dist >= bottom_border){ //when the box touches the bottom
+        if (current_bottom <= 0){ //when the box touches the bottom
             fall_sound()
             status.innerText = "Failed"
             clearInterval(id);
@@ -327,7 +327,7 @@ function fall(current_top, max_height, current_left, height_percentage){
             score.innerText = ` Score: ${score_number }`
 
         }
-        else if (current_top >= char_top) {
+        else if (current_bottom <= char_bottom) {
           
           char_left = current_left
           if (checkPass() && char_left + char_width/2 < next_left){
@@ -369,8 +369,8 @@ function fall(current_top, max_height, current_left, height_percentage){
                   rotated = true
                   
                 }
-                current_top += Math.sqrt(current_top - max_height + 0.01) /speed_factor_y;
-                character.style.top = current_top + '%';
+                current_bottom -= Math.sqrt(max_height - current_bottom + 0.01) /speed_factor_y;
+                character.style.bottom = current_bottom + '%';
 
                 if (current_left < right_border ){
                   if (current_left + char_width  > next_left && current_left + char_width < next_left + next_width){return}
@@ -386,14 +386,15 @@ function fall(current_top, max_height, current_left, height_percentage){
         } 
         
         else { //still flying above the height of the box
-          current_top += Math.sqrt(current_top - max_height + 0.01) /speed_factor_y;
-          character.style.top = current_top + '%';
+          // console.log("hey")
+          current_bottom -= Math.sqrt( max_height - current_bottom + 0.01) /speed_factor_y;
+          character.style.bottom = current_bottom + '%';
           if (current_left < right_border ){
-            if (current_left + char_width > next_left && current_left + char_width < next_left + next_width && current_top > char_top) {return }
-            else {
+            // if (current_left + char_width > next_left && current_left + char_width < next_left + next_width && current_bottom > char_bottom) {return }
+            // else {
             current_left += speed_factor_x * height_percentage;
             character.style.left = current_left + '%';
-            }
+            // }
         }
         }
     }    
@@ -406,7 +407,7 @@ function checkPass(cumulative = false){
       bonus.style.left = char_left + "%"
       score_number += 10 * (Math.pow(2, consecutive_times - 1))
       consecutive_times ++ 
-      console.log(consecutive_times)
+      // console.log(consecutive_times)
       score.innerText = ` Score: ${score_number }`
       combo_sound()
 
@@ -483,7 +484,7 @@ function focusRestrict ( event ) {
 
 function restart(){
    character.style.left = "24%"
-   character.style.top = "57%"
+   character.style.bottom = "27%"
    character.style.transform = ""
    start.style.left = "20%"
    next.style.left = "40%"
@@ -493,6 +494,6 @@ function restart(){
    round_passed = 0
    consecutive_times = 0
    char_left = 24
-   char_top = 57
+   char_bottom = 27
    
 }
