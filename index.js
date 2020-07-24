@@ -64,7 +64,6 @@ function get_players(){
   fetch("http://localhost:3000/api/v1/players")
   .then(res => res.json())
   .then(res => {
-    console.log(res)
     players_list = res
     modalShow ()
     create_players_selection(res)
@@ -139,8 +138,14 @@ const keydown_function = function(event){
   keyDown = true 
   if (event.repeat || event.keyCode !== 32) { return } //make sure space is pressed'
   key_hold_sound()
+  var height_percentage = 1
   timer_function = setInterval(function(){ 
 
+      if (height_percentage > 0.5){
+        height_percentage -= 0.001
+      }
+      character.style.height = (height_percentage*char_height) + 
+      "%"
       time_hold += 5;
       let bar_current_width = bar_width * (4000 - time_hold) / 4000
       if (bar_current_width > 0){
@@ -200,6 +205,7 @@ const keyup_function = function(event){
   if (event.isComposing || event.keyCode === 229 || event.keyCode !== 32) {
       return;
   }
+  character.style.height = "16%"
   key_hold_sound_pause()
   land_sound()
   let height_percentage = time_hold > 4000 ? 1 : time_hold / 4000;
@@ -254,7 +260,6 @@ function shift_next(){
       start = tmp; //start box becomes the (then) next box    
       document.addEventListener("keyup", keyup_function)
       document.addEventListener("keydown", keydown_function)
-      // console.log(start_left, next_left, start.style.left, next.style.left)
     }
     
     else {
@@ -302,7 +307,6 @@ function jump(height_percentage){
 }
 
 function fall(current_bottom, max_height, current_left, height_percentage){
-  // console.log("fall")
     let id = setInterval(frame, 1);
     document.removeEventListener("keyup", keyup_function)
     document.removeEventListener("keydown", keydown_function)
@@ -314,7 +318,7 @@ function fall(current_bottom, max_height, current_left, height_percentage){
         if (rotated) {
           rotated_dist = char_width * 2;
         }
-        if (current_bottom <= 0){ //when the box touches the bottom
+        if (current_bottom - rotated_dist<= 0){ //when the box touches the bottom
             fall_sound()
             status.innerText = "Failed"
             clearInterval(id);
@@ -386,7 +390,6 @@ function fall(current_bottom, max_height, current_left, height_percentage){
         } 
         
         else { //still flying above the height of the box
-          // console.log("hey")
           current_bottom -= Math.sqrt( max_height - current_bottom + 0.01) /speed_factor_y;
           character.style.bottom = current_bottom + '%';
           if (current_left < right_border ){
@@ -407,7 +410,6 @@ function checkPass(cumulative = false){
       bonus.style.left = char_left + "%"
       score_number += 10 * (Math.pow(2, consecutive_times - 1))
       consecutive_times ++ 
-      // console.log(consecutive_times)
       score.innerText = ` Score: ${score_number }`
       combo_sound()
 
