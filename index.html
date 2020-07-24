@@ -31,10 +31,19 @@
     <label for="name">Username:</label>
         <input type="text" id="name" class="input" placeholder="Username" />
         <!-- <button class="btn" type="button" id="modal_close">Open the Modal</button> -->
+        
+        <div id="player_selection" style="margin-bottom: 2%;">
+
+
+        </div>
         <button class="btn" id="modal_close" type="button" aria-label="close">
      PLAY
     </button>
-
+        
+        <br>
+        <button id="leaderboard" class="btn">LeaderBoard</button>
+        <button id="close" class="btn" style="float: right; margin-right: 2%">Close</button>
+        <div id="leaderboard_div"></div>
     </div> <!-- end .modal-content -->
 
     </div> <!-- end .modal-overlay -->
@@ -62,8 +71,9 @@
 
     <audio id="combo_three" controls style="display:none">
         <source src="asset/combo3.mp3" type="audio/mp3"> Your browser does not support the audio element.
-    </audio>  
-    <script src="game.js"></script>
+    </audio> 
+    <script src="variables.js"></script>
+    <script src="sound.js"></script>
     <script src="index.js"></script>
 </body>
 </html>
