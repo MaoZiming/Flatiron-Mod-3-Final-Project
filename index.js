@@ -38,7 +38,7 @@ var next_width = 15 //next box width (perecntage)
 var start_width = 10 //start box width (percentage)
 var start_left = 20 //start box left (percentage)
 
-const jump_height = 50  //maximum jump_height (percentage)
+const jump_height = 60  //maximum jump_height (percentage)
 const jump_width = 80  //maximum jump_width (percentage)
 const right_border = 100 - char_width 
 const speed_factor_y = 5  //set the speed of vertical jump
@@ -537,6 +537,10 @@ function restart(){  //restart the game and reposition all the components
    character.style.transform = ""
    start.style.left = "20%"
    next.style.left = "40%"
+   start_width = 10
+   next_width = 15
+   start.style.width = "10%"
+   next.style.width = "15%"
    next_left = 40
    start_left = 20
    round_passed = 0

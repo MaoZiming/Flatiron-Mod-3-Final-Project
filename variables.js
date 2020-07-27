@@ -1,5 +1,5 @@
 const box_location = [
-    {left: 15, width: 12},
+    {left: 19, width: 12},
     {left: 17, width: 13},
     {left: 18, width: 16},
     {left: 18, width: 17},
