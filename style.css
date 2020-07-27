@@ -12,9 +12,14 @@
     top: 15%;
     position: absolute;
     left: 10%;
-    width: 80%;
+    right: 10%;
+    width: auto;
     height: 70%;
     border: 5px solid black;
+    /* background-color: grey; */
+    background-image: url('asset/background.jpg');
+    background-size: 100% 100%;
+    z-index: -10;
 }
 
 #character {
@@ -28,6 +33,7 @@
     bottom: 27%;
     transform-origin: bottom left;
     transition: transform 0.2s;
+    
 }
 
 #bar {
@@ -60,6 +66,8 @@
     left: 40%;
     transition: opacity 1s;
     z-index: -1;
+    box-shadow: -2px -2px 5px 3px grey;
+
 }
 
 #start {
@@ -74,6 +82,7 @@
     left: 20%;
     transition: opacity 1s;
     z-index: -2;
+    box-shadow: -2px -2px 5px 3px grey;
 }
 
 #score {
