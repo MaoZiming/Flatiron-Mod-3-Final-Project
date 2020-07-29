@@ -8,14 +8,16 @@
 </head>
 <body>
     <div id="game">
-        <div id = "bar-container"></div>
-        <div id = "bar"></div>
+        <div id = "bar-container">        <div id = "bar"></div>
+    </div>
+    <div id="coin"></div>
         <div id = "character"></div>
         <div id = "block"></div>
         <div id = "start"></div>
-        <h1 id = "score"> Score: 0 </h2>
+        <p id = "score"> 0 </p>
         <h1 id = "bonus"></h1>
-        <h1 id = "name_display"></h1>
+        <h1 id = "name_display" style="opacity: 0;"></h1>
+        <div id="lava"></div>
     </div>
 
     <div class="modal-overlay" id="modal_window"
@@ -31,8 +33,16 @@
         
         <div id="player_selection" style="margin-bottom: 2%;">
 
+            <div id="edit_player">
 
+            </div>
         </div>
+        <div id="game_selection" style="margin-bottom: 2%;">
+
+
+        </div> 
+        <div id="edit_game"   style="margin-bottom: 2%;">
+            </div>
         <button class="btn" id="modal_close" type="button" aria-label="close">
      PLAY
     </button>

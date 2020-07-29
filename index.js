@@ -4,8 +4,11 @@
 
 const character = document.querySelector("#character") 
 const bar = document.querySelector("#bar")
-const bar_width = 20
-
+const bar_width = 100
+const coin = document.querySelector("#coin")
+var coin_left = 47.5
+var coin_width = 1
+var coin_bottom = 30
 var start = document.querySelector("#start") //start box
 var next = document.querySelector("#block")  //next box
 
@@ -56,6 +59,7 @@ var keyDown = false  //if key is down
 var top_players  //top_players for leaderboard
 
 var players_list //list of players
+var games_list
 
 get_players() //eq. to start
 
@@ -67,10 +71,118 @@ function get_players(){ //make a fetch requests to get players
     players_list = res
     modalShow ()  //show modal window
     create_players_selection(res)
+    get_games()
   })
 
 }
 
+function get_games(){ //make a fetch requests to get players
+
+  fetch("http://localhost:3000/api/v1/games")
+  .then(res => res.json())
+  .then(res => {
+    games_list = res
+    console.log(games_list)
+    create_games_selection(res)
+    
+  })
+
+}
+function edit_game(game_id, name){
+  console.log(game_id, name)
+}
+
+function delete_game(game_id){
+  console.log(game_id)
+
+  fetch("http://localhost:3000/api/v1/games/"+game_id, {
+    method: "DELETE"
+  })
+  .then(res => res.json())
+  .then(res => {
+    console.log(res)
+    get_games()
+    get_players()
+  })
+
+}
+function create_games_selection(games){   
+    
+  const game_selection_div = document.querySelector("#game_selection")
+  game_selection_div.innerHTML = ""
+  const l = document.createElement("label")
+  l.innerText = "Delete existing games"
+  const br = document.createElement("br")
+  var selectList = document.createElement("select")
+  selectList.id = "selectGame"
+  var option = document.createElement("option")
+  option.value = -1
+  option.text = "Nothing Selected"
+  selectList.appendChild(option)
+  for (let game of games){
+    var option = document.createElement("option")
+    option.value = game.id
+    option.text = `Score: ${game.score}, player: ${game.player.name}`
+    selectList.appendChild(option)
+  }
+
+  selectList.addEventListener("change", function(){
+    if (selectList.selectedIndex !== 0){
+      const editDiv = document.querySelector("#edit_game")
+
+      editDiv.innerHTML = ""
+      // const newName = document.createElement("input")
+      const deleteBtn = document.createElement("button")
+      // newName.style.marginBottom = "10px"
+      // const br = document.createElement("br")
+      deleteBtn.innerText = "Delete Game"
+      editDiv.append(deleteBtn)
+      let option_value = selectList.options[selectList.selectedIndex].value
+
+      deleteBtn.addEventListener("click", function(){
+        delete_game(option_value)
+        leaderboard_div.innerText = ""
+        editDiv.innerHTML = ""
+        
+      })
+      // editDiv.append(newName, br, deleteBtn)
+      // let option_text = selectList.options[selectList.selectedIndex].text
+      // let option_value = selectList.options[selectList.selectedIndex].value
+      // newName.value = option_text.split("player: ")[1]
+
+      // editBtn.addEventListener("click", function(){
+      //   edit_game(option_value, newName.value)
+      //   eventDiv.innerHTML = 
+      // })
+    }
+  })
+
+
+  game_selection_div.append(l, br, selectList)
+
+
+}
+function edit_player_name(id, name){
+  console.log(id, name)
+
+  const configObj = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name
+    })
+  }
+
+  fetch("http://localhost:3000/api/v1/players/"+id, configObj)
+  .then(res => res.json())
+  .then(res => {
+    leaderboard_div.innerHTML = ""
+    get_players()
+    get_games()
+  })
+}
 function create_players_selection(players){   
   
   //create existing players selection dropdown box
@@ -93,15 +205,60 @@ function create_players_selection(players){
     selectList.appendChild(option)
   }
 
+  const toggle_edit_btn = document.createElement("button")
+  toggle_edit_btn.innerText = "Edit Player"
+  toggle_edit_btn.style.marginLeft = "10px"
+
   // update player input if dropdown selection box changes
+  const edit_player_div = document.createElement("div")
+  const br2 = document.createElement("br")
+
+  toggle_edit_btn.addEventListener("click", function(){
+
+    show_edit_player()
+  })
+
+  // const for the function
+  const new_name_label = document.createElement("label")
+  const br3 = document.createElement("br")
+  const br4 = document.createElement("br")
+  const new_name = document.createElement("input")
+  const edit_btn = document.createElement("button")
+
+  function show_edit_player(){
+    if (edit_player_div.innerHTML != "") {
+      edit_player_div.innerHTML = ""
+      return
+    }
+    edit_player_div.innerHTML = ""
+    const l2 = document.createElement("label")
+    l2.innerText = "Edit Player Name"
+    l2.style.marginTop = "5px"
+
+    new_name_label.innerText = "Name:   "
+    new_name_label.style.fontSize = "15px"
+    new_name_label.style.marginRight = "5px"
+    new_name.value = name_input.value
+    edit_btn.innerText = "Edit Player Name"
+    edit_btn.style.marginTop = "10px"
+    edit_btn.addEventListener("click", function(){
+      edit_player_name(selectList.options[selectList.selectedIndex].value, new_name.value)
+      name_input.value = new_name.value
+    })
+
+    edit_player_div.append(l2, br3, new_name_label, new_name, br4,edit_btn)
+
+  }
+
+  player_selection_div.append(l, br, selectList, toggle_edit_btn, br2, edit_player_div)
+
   selectList.addEventListener("change", function(){
     if (selectList.selectedIndex !== 0){
       name_input.value = selectList.options[selectList.selectedIndex].text
       name_display.innerText = name_input.value
+      new_name.value = name_input.value
     }
   })
-
-  player_selection_div.append(l, br, selectList)
 
   // If the current_player is an existing player, update the dropdown selection box
   if (players_list.find(player => player.name == name_display.innerText)){
@@ -178,6 +335,7 @@ leaderboard_btn.addEventListener("click", function(){
 
   leaderboard_div.innerText = ""
 
+
   const ol = document.createElement("ol")
   for (const index in top_players){
     const li = document.createElement("li")
@@ -252,6 +410,7 @@ function shift_next(){
   shift_distance = next_left + next_width / 2 - start_left - start_width / 2 - (Math.random()*2) //needs to be changed later
   document.removeEventListener("keyup", keyup_function)
   document.removeEventListener("keydown", keydown_function)
+  coin.style.opacity = 0
 
 
   function frame(){
@@ -264,13 +423,16 @@ function shift_next(){
       if (box_location[round_passed -1] == undefined){
         alert("Game over, you have passed all the boxes!")
         score_number = 0
-        score.innerText = ` Score: ${score_number }`
+        score.innerText = `${score_number }`
         record_player(name_display.innerText, score_number)
 
         
       }
       next = create_next_box(next_left + box_location[round_passed-1].left + next_width, box_location[round_passed-1].width) //next box becomes the new box created from start box
-      start = tmp //start box becomes the (then) next box    
+      start = tmp //start box becomes the (then) next box
+      coin.style.opacity = 1
+      coin_left = next_left + next_width / 2
+      coin.style.left = next_left + next_width / 2 + "%"   
       document.addEventListener("keyup", keyup_function)
       document.addEventListener("keydown", keydown_function)
     }
@@ -280,6 +442,8 @@ function shift_next(){
       next_left -= shift_distance/250
       char_left -= shift_distance/250
       start_left -= shift_distance/250
+      coin_left -= shift_distance/250
+      coin.style.left = coin_left + "%"
       next.style.left = next_left + "%"
       character.style.left = char_left + "%"
       start.style.left = start_left + "%"
@@ -300,7 +464,7 @@ function jump(height_percentage){
     document.removeEventListener("keydown", keydown_function)
 
     function frame() {
-      if (current_bottom > max_height) {
+      if (current_bottom > max_height) { //if the avatar is hitting the heighest point
         clearInterval(id)
         document.addEventListener("keyup", keyup_function)
         document.addEventListener("keydown", keydown_function)
@@ -333,7 +497,7 @@ function fall(current_bottom, max_height, current_left, height_percentage){
         // current_bottom - rotated_dist = 0
 
         if (rotated) {
-          rotated_dist = char_width * 2 //this gives the correct position
+          rotated_dist = char_width * 2.15 //this gives the correct position
         }
 
         if (current_bottom - rotated_dist<= 0){ 
@@ -343,10 +507,13 @@ function fall(current_bottom, max_height, current_left, height_percentage){
             fall_sound()
             clearInterval(id)
             record_player(name_display.innerText, score_number)
-            alert( `Score: ${score_number }`)
+            current_bottom = 0 + rotated_dist 
+            character.style.bottom = current_bottom + "%"
+
+            alert( `Score is ${score_number }`)
 
             score_number = 0
-            score.innerText = ` Score: ${score_number }`
+            score.innerText = `${score_number }`
         }
 
         else if (current_bottom <= char_bottom) {
@@ -379,10 +546,14 @@ function fall(current_bottom, max_height, current_left, height_percentage){
               start.style.opacity = 0 // hide the start box
               round_passed ++
               score_number += 10
-              score.innerText = ` Score: ${score_number }`
+              score.innerText = `${score_number }`
               if (from == start){   //if the character is jumped from the start box
+
+                current_bottom = char_bottom
+                character.style.bottom = current_bottom + "%"
                 from = next 
                 shift_next()
+
               }
           }
           else {
@@ -392,8 +563,12 @@ function fall(current_bottom, max_height, current_left, height_percentage){
 
                 document.addEventListener("keyup", keyup_function)
                 document.addEventListener("keydown", keydown_function)
+                current_bottom = char_bottom
+                character.style.bottom = current_bottom + "%"
                 clearInterval(id)
                 consecutive_times = 0
+                character.style.borderBottom = "rgb(64,64,64) 5px solid"
+
               }
               else {   //left the starting box but misses
 
@@ -410,7 +585,9 @@ function fall(current_bottom, max_height, current_left, height_percentage){
                 character.style.bottom = current_bottom + '%'
 
                 if (current_left < right_border ){
-                  if (current_left + char_width  > next_left && current_left + char_width < next_left + next_width){return}
+                  if (current_left + char_width  > next_left && current_left + char_width < next_left + next_width){
+                    character.style.left = "97"
+                    return}
                   // If the right border of the character hits the box
                   // Stop incrementing the left value
                   
@@ -438,25 +615,41 @@ function fall(current_bottom, max_height, current_left, height_percentage){
     }    
 }
 
+function checkCoin(){
+  return char_left + char_width > coin_left && char_left  < coin_left + coin_width * 2 && char_bottom < coin_bottom
+}
+
+function gotCoin(){
+  bonus.innerText = "+" + 10 * (Math.pow(2, consecutive_times - 1))
+  bonus.style.left = char_left + "%"
+  score_number += 10 * (Math.pow(2, consecutive_times - 1))
+  consecutive_times ++ 
+  score.innerText = `${score_number }`
+  combo_sound()
+  coin.style.opacity = 0
+
+  character.style.borderBottom = "rgb(241, 229, 89) 5px solid"
+}
+
 function checkPass(cumulative = false){ 
   
     //check if the character lands on the next box
 
-    let error_margin = next_width * 0.2
-    if (cumulative && char_left + char_width/2 > next_left + next_width /2 - error_margin && char_left + char_width /2 < next_left + next_width /2 + error_margin ){
+    // let error_margin = coin_width * 3
+    if (cumulative && checkCoin() ){
 
     // If the character hits within error_margin to the center
 
-      bonus.innerText = "+" + 10 * (Math.pow(2, consecutive_times - 1))
-      bonus.style.left = char_left + "%"
-      score_number += 10 * (Math.pow(2, consecutive_times - 1))
-      consecutive_times ++ 
-      score.innerText = ` Score: ${score_number }`
-      combo_sound()
+      gotCoin()
+
     }
     else {
       if (cumulative){
-      consecutive_times = 1}
+      consecutive_times = 1
+      character.style.borderBottom = "rgb(64,64,64) 5px solid"
+
+    
+    }
     }
 
     if (char_left + char_width > next_left && char_left < next_left + next_width) {return true}
@@ -479,7 +672,7 @@ let enterClose = function(event){
 function modalShow () {
   lastFocus = document.activeElement
   name_display.innerText = name_input.value
-
+  
   mOverlay.setAttribute('aria-hidden', 'false')
   modalOpen = true
   modal.setAttribute('tabindex', '0')
@@ -547,4 +740,6 @@ function restart(){  //restart the game and reposition all the components
    consecutive_times = 0
    char_left = 24
    char_bottom = 27
+   coin_left = 47.5
+   coin.style.left = "47.5%"
 }

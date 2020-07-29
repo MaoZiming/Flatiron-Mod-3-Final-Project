@@ -19,5 +19,7 @@ const box_location = [
     {left: 25, width: 9},
     {left: 24, width: 11},
     {left: 30, width: 10},
+    {left: 30, width: 9},
+    {left: 32, width: 12},
   ]
 

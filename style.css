@@ -1,207 +1,253 @@
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 #status {
-    margin-top: 3%;
-    margin-left: 47%;
+  margin-top: 3%;
+  margin-left: 47%;
 }
 
 #game {
-    top: 15%;
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    width: auto;
-    height: 70%;
-    border: 5px solid black;
-    /* background-color: grey; */
-    background-image: url('asset/background.jpg');
-    background-size: 100% 100%;
-    z-index: -10;
+  top: 15%;
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  width: auto;
+  height: 70%;
+  background-color: rgb(52,166,251);
+  z-index: -10;
 }
 
 #character {
-    width: 3%;
-    height: 16%;
-    background-image: url('asset/i.png');
-    background-size: 100% 100%;
-    position: absolute;
-    /* top: 57%; */
-    left: 24%;
-    bottom: 27%;
-    transform-origin: bottom left;
-    transition: transform 0.2s;
-    
+  width: 3%;
+  height: 16%;
+  background-color: rgb(64,64,64);
+  position: absolute;
+  /* top: 57%; */
+  left: 24%;
+  bottom: 27%;
+  transform-origin: bottom left;
+  border-bottom: rgb(64,64,64) 5px solid;   
+  transition:  border-bottom 0.5s, transform 0.2s;
 }
 
 #bar {
-    width: 20%;
-    height: 5%;
-    background-color: blue;
-    position: absolute;
-    left: 70.3%;
-    top: 10.56%;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(64,64,64);
+  box-shadow: 0 10px 40px -10px rgb(64,64,64);
+  vertical-align: middle;
 }
 #bar-container {
-    width: 20%;
-    height: 5%;
-    background-color: white;
-    position: absolute;
-    left: 70%;
-    top: 10%;
-    border: 5px solid black
+  width: 20%;
+  height: 5%;
+  background-color: white;
+  
+  position: absolute;
+  left: 70%;
+  top: 10%;
+  align-items: center;
+
+  border: 5px solid rgb(64,64,64)
 }
 
 #block {
-    width: 15%;
-    height: 27%;
-    background-image: url('https://opengameart.org/sites/default/files/box.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    position: absolute;
-    /* top: 73%; */
-    bottom: 0%;
-    left: 40%;
-    transition: opacity 1s;
-    z-index: -1;
-    box-shadow: -2px -2px 5px 3px grey;
-
+  width: 15%;
+  height: 27%;
+  background-color: white;
+  position: absolute;
+  bottom: 0%;
+  left: 40%;
+  transition: opacity 1s;
+  z-index: 1;
 }
 
 #start {
-    width: 10%;
-    height: 27%;
-    background-image: url('https://opengameart.org/sites/default/files/box.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    position: absolute;
-    /* top: 73%; */
-    bottom: 0%;
-    left: 20%;
-    transition: opacity 1s;
-    z-index: -2;
-    box-shadow: -2px -2px 5px 3px grey;
+  width: 10%;
+  height: 27%;
+  background-color: white;
+  position: absolute;
+  bottom: 0%;
+  left: 20%;
+  transition: opacity 1s;
+  z-index: -2;
+}
+#coin {
+  position:absolute;
+  width: 1%;
+  height: 1vw;
+  bottom: 30%;
+  left: 47.5%;
+  background-color: rgb(241, 229, 89);
+  transition: opacity 0.5s;
+  animation: MoveUpDown 1s linear infinite;
+
 }
 
 #score {
-    position: absolute;
-    top: 10%;
-    left: 20%;
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  color: rgb(64,64,64);
+  font-size: 80px;
 }
 
 #bonus {
-    color: red;
-    position: absolute;
-    top: 76%;
+  color: rgb(241, 229, 89);
+  font-size: 40px;
+  position: absolute;
+  top: 76%;
+  z-index: 100;
 }
 
 #name_display {
-    position: absolute;
-    left: 5%
+  position: absolute;
+  left: 5%
+}
+
+#lava{
+bottom: 0%;
+position: absolute;
+height: 1%;
+width: 100%;
+z-index: -10;
+background-color: rgb(255, 100,100)
+}
+
+
+@keyframes MoveUpDown {
+0%, 100% {
+  transform: translateY(0); 
+}
+50% {
+  transform: translateY(-10px);
+}
+}
+ol {
+list-style-type: none;  
+counter-reset: li;
+}
+
+li {
+font-size: 20px;
+
+}
+li:hover{
+font-size: 25px;
+transition: font-size 0.5s;
+color: #c12f48;
+}
+li:before {
+counter-increment: li;
+content: counter(li, decimal-leading-zero);
+color: #921c2b;
+margin-right: 0.5em;
+
 }
 
 /* modal window */
 /* Credit: https://codepen.io/scottohara/pen/lIdfv */
 
 /*
-  Modal Overlay
+Modal Overlay
 */
 .modal-overlay {
-    background:rgba(0,0,0,.8);
-    height: 100%;
-    left: 0;
-    display: flex;
-    overflow: auto;
-    padding: 1.5em;
-    position: fixed;
-    top: 0;
-    transition: opacity .2s;
-    width: 100%;
-    z-index: -1;
-  }
-  
-  .modal-overlay[aria-hidden="true"] {
-    opacity: 0;
-    visibility: hidden;
-  }
-  
-  .modal-overlay[aria-hidden="false"] {
-    opacity: 1;
-    visibility: visible;
-    z-index: 2;
-  }
-  
-  /*
-    Modal Content Area
-  */
-  .modal-content {
-    background: #efefef;
-    margin: auto;
-    max-width: 800px;
-    overflow: auto;
-    overflow-x: hidden;
-    padding: 1.5em;
-    position: relative;
-    transform: scale(.8);
-    transition: transform .3s;
-    width: 100%;
-  }
-  
-  .modal-overlay[aria-hidden="false"] .modal-content {
-    transform: scale(1);
-  }
-  
-  /*
-    General Modal Content
-  */
-  #modal-title {
-    margin-top: 0;
-    padding-right: 1.25em;
-  }
-  
-  /*
-    Close Modal Button
-  */
-  .btn {
-    background: #921c2b;
-    border: 1px solid #4d0912;
-    color: #fff;
-    cursor: pointer;
-    font-size: 1em;
-    line-height: 1;
-    margin-bottom: 12px;
-    padding: 16px 24px;
-    position: relative;
-    text-align: center;
-    transition: transform .2s, background .2s;
-  }
-  
-  .btn:hover, .btn:focus {
-    background: #c12f48;
-    transform: scale(1.1);
-    z-index: 3;
-  }
+  background:rgba(0,0,0,.8);
+  height: 100%;
+  left: 0;
+  display: flex;
+  overflow: auto;
+  padding: 1.5em;
+  position: fixed;
+  top: 0;
+  transition: opacity .2s;
+  width: 100%;
+  z-index: -1;
+}
 
-  label {
-    display: inline-block;
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: .5em;
-  }
-  
-  .input {
-    border: 1px solid #333;
-    display: block;
-    font-size: 1.4em;
-    margin-bottom: 1em;
-    min-width: 230px;
-    padding: 8px;
-    width: 100%;
-  }
+.modal-overlay[aria-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modal-overlay[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+/*
+  Modal Content Area
+*/
+.modal-content {
+  background: #efefef;
+  margin: auto;
+  max-width: 800px;
+  overflow: auto;
+  overflow-x: hidden;
+  padding: 1.5em;
+  position: relative;
+  transform: scale(.8);
+  transition: transform .3s;
+  width: 100%;
+}
+
+.modal-overlay[aria-hidden="false"] .modal-content {
+  transform: scale(1);
+}
+
+/*
+  General Modal Content
+*/
+#modal-title {
+  margin-top: 0;
+  padding-right: 1.25em;
+}
+
+/*
+  Close Modal Button
+*/
+.btn {
+  background: #921c2b;
+  border: 1px solid #4d0912;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1em;
+  line-height: 1;    /* box-shadow: -2px -2px 5px 3px grey; */
+
+  margin-bottom: 12px;
+  padding: 16px 24px;
+  position: relative;
+  text-align: center;
+  transition: transform .2s, background .2s;
+}
+
+.btn:hover, .btn:focus {
+  background: #c12f48;
+  transform: scale(1.1);
+  z-index: 3;
+}
+
+label {
+  display: inline-block;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: .5em;
+}
+
+.input {
+  border: 1px solid #333;
+  display: block;
+  font-size: 1.4em;
+  margin-bottom: 1em;
+  min-width: 230px;
+  padding: 8px;
+  width: 100%;
+}
 
 
-  #leaderboard_div {
-    margin-left: 2%;
-  }
+#leaderboard_div {
+  margin-left: 2%;
+}

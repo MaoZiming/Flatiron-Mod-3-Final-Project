@@ -17,12 +17,12 @@ class Api::V1::PlayersController < ApplicationController
         render json: player
     end
 
-    # def update
-    #     # byebug
-    #     player = Player.find(params[:id])
-    #     player.update(player_params)
-    #     render json: player
-    # end
+    def update
+        # byebug
+        player = Player.find(params[:id])
+        player.update(player_params)
+        render json: player
+    end
 
     # def destroy
     #     player = Player.find(params[:id])
