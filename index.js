@@ -127,10 +127,12 @@ function create_games_selection(games){
   }
 
   selectList.addEventListener("change", function(){
-    if (selectList.selectedIndex !== 0){
-      const editDiv = document.querySelector("#edit_game")
+    const editDiv = document.querySelector("#edit_game")
 
-      editDiv.innerHTML = ""
+    editDiv.innerHTML = ""
+    
+    if (selectList.selectedIndex !== 0){
+
       // const newName = document.createElement("input")
       const deleteBtn = document.createElement("button")
       // newName.style.marginBottom = "10px"
@@ -154,6 +156,9 @@ function create_games_selection(games){
       //   edit_game(option_value, newName.value)
       //   eventDiv.innerHTML = 
       // })
+    }
+    else {
+      
     }
   })
 
@@ -586,7 +591,7 @@ function fall(current_bottom, max_height, current_left, height_percentage){
 
                 if (current_left < right_border ){
                   if (current_left + char_width  > next_left && current_left + char_width < next_left + next_width){
-                    character.style.left = "97"
+                    character.style.left = "95"
                     return}
                   // If the right border of the character hits the box
                   // Stop incrementing the left value

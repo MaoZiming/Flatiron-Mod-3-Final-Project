@@ -39,7 +39,11 @@
   background-color: rgb(64,64,64);
   box-shadow: 0 10px 40px -10px rgb(64,64,64);
   vertical-align: middle;
+  text-align: center;
+  color: white;
+  /* padding-top: ; */
 }
+
 #bar-container {
   width: 20%;
   height: 5%;
@@ -47,7 +51,7 @@
   
   position: absolute;
   left: 70%;
-  top: 10%;
+  top: 13%;
   align-items: center;
 
   border: 5px solid rgb(64,64,64)
