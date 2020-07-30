@@ -2,7 +2,7 @@
 ## Made by Ziming Mao
 ## Short Description
 
-Square Jump is a single page Javascript game. Player controls the avatar by pressing the space key to jump from box to box.
+Square Jump is a single page Javascript game. Player controls the avatar by pressing the space key to jump from box to box. Video Link: https://youtu.be/N5zGHOdjvlc
  
 ## Features
 Press the key “Space” to control the jump. The bar at the top right corner will show how long the “space” key is pressed. The longer the “space” is pressed, the longer the jump will be.
